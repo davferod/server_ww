@@ -23,26 +23,33 @@ export class AuthService {
     }
 
     async validateUser(loginUserInput: LoginUserInput): Promise<any> {
-        const { username, password } = loginUserInput;
-        const user = await this.usersService.findOne(username);
-        if (!bcrypt.compare(password, user.password)){
-            throw new BadRequestException('Invalid password do not match');
+        const { email, password } = loginUserInput;
+        const user = await this.usersService.findOne(email);
+
+        if (!user) {
+            throw new BadRequestException('Invalid email or password');
         }
-        const valid = bcrypt.compare(password, user.password);
-        if (user && valid) {
-            const { password, ...result } = user;
-            return result;
+
+        const validPassword = bcrypt.compareSync(password, user.password);
+        if (!validPassword) {
+            throw new BadRequestException('Invalid email or password');
         }
-        throw new Error('Invalid username or password');
+
+        const { password: userPassword, ...result } = user;
+        return result;
     }
 
     async login(loginInput: LoginInput): Promise<LoginResponse> {
         const { email, password } = loginInput;
         const userFound = await this.usersService.findOne(email);
-        console.log('service', userFound);
-        if (!bcrypt.compareSync( password, userFound.password)) {
-            throw new Error('Invalid user object');
+        if (!userFound) {
+            throw new BadRequestException('Invalid email or password');
         }
+
+        if (!bcrypt.compareSync(password, userFound.password)) {
+            throw new BadRequestException('Invalid email or password');
+        }
+
         try {
             const access_token = this.getJwtToken(userFound._id.toString());
             const refresh_token = this.getJwtToken(userFound.username.toString());
@@ -59,7 +66,7 @@ export class AuthService {
     async signup(loginUserInput: LoginUserInput): Promise<LoginResponse> {
         try {
             const createdUser = await this.usersService.create(loginUserInput);
-            const user = createdUser
+            const user = createdUser;
             const accessToken = this.getJwtToken(user._id.toString());
             const refreshToken = this.getJwtToken(user.username.toString());
             return {accessToken , refreshToken, user };
@@ -79,19 +86,55 @@ export class AuthService {
         return user;
     }
 
-    // buscar si email esta disponible para registrarse
-    async isAvailable(email_user: string): Promise<User> {
+    // true when the email can be used for a new signup
+    async isAvailable(email_user: string): Promise<boolean> {
         const user = await this.usersService.findOne(email_user);
-        if (!user) {
-            throw new UnauthorizedException('Email is available');
-        }
-        const userAvailable = await this.usersService.findOne(email_user);
-        return userAvailable;
+        return !user;
     }
 
     async revalidateToken(user: User): Promise<LoginResponse> {
         const accessToken = this.getJwtToken(user._id.toString());
         const refreshToken = this.getJwtToken(user.username.toString());
         return { accessToken, refreshToken, user };
+    }
+
+    // Bootstrap method: Promote user to admin if no admins exist yet
+    async bootstrapAdmin(email: string): Promise<LoginResponse> {
+        // Validar que el email coincide con BOOTSTRAP_ADMIN_EMAIL del entorno
+        const bootstrapEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
+        if (!bootstrapEmail || email !== bootstrapEmail) {
+            throw new BadRequestException(
+                'Bootstrap admin email does not match BOOTSTRAP_ADMIN_EMAIL environment variable'
+            );
+        }
+        // Check if any admin or superadmin exists
+        const adminExists = await this.usersService.findAdmins();
+        
+        if (adminExists.length > 0) {
+            throw new BadRequestException('Admin users already exist. Cannot use bootstrap.');
+        }
+
+        // Find the user and promote to admin
+        const user = await this.usersService.findOne(email);
+        
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+
+        // Update the user role to admin
+        const updatedUser = await this.usersService.updateRole(email, 'admin');
+
+        if (!updatedUser) {
+            throw new BadRequestException('Failed to promote user');
+        }
+
+        const accessToken = this.getJwtToken(updatedUser._id.toString());
+        const refreshToken = this.getJwtToken(updatedUser.username.toString());
+        
+        return {
+            accessToken,
+            refreshToken,
+            user: updatedUser,
+        };
     }
 }

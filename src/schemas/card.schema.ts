@@ -7,23 +7,26 @@ export type CardDocument = HydratedDocument<Card>;
 @Schema({ timestamps: true })
 export class Card {
 
-  @Prop()
+  @Prop(String)
   title: string;
 
   @Prop()
   description: string;
 
   @Prop()
-  position: number;
+  position?: number;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Task' }] })
+  @Prop([{ type: Types.ObjectId, ref: 'Task' }])
   tasks: Types.ObjectId[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Routine' }] })
+  @Prop([{ type: Types.ObjectId, ref: 'Routine' }])
   routines: Types.ObjectId[];
 
   @Prop({ type: Types.ObjectId, ref: 'User', index: true })
   userid?: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'List', index: true })
+  listId: Types.ObjectId;
 
   @Prop()
   createdAt: Date;

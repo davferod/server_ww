@@ -1,0 +1,26 @@
+[
+  {
+    "email": "davvidrd81@gmail.com",
+    "password": "SuperPass123!"
+  },
+  {
+    "email": "entrenador1@gym.com",
+    "password": "Entrenador123!"
+  },
+  {
+    "email": "atleta1@gym.com",
+    "password": "Atleta123!"
+  },
+  {
+    "email": "atleta2@gym.com",
+    "password": "Atleta123!"
+  },
+  {
+    "email": "testuser@example.com",
+    "password": "Test123!"
+  },
+  {
+    "email": "superadmin@gym.com",
+    "password": "SuperAdmin123!"
+  }
+]

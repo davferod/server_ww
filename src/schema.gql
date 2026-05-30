@@ -42,11 +42,12 @@ type Card {
   _id: ID!
   createdAt: DateTime!
   deletedAt: DateTime
-  description: String!
-  position: Int!
+  description: String
+  listId: ID!
+  position: Int
   routines: [Routine!]
   tasks: [Task!]
-  title: String!
+  title: String
   updatedAt: DateTime!
   userid: ID!
 }
@@ -200,9 +201,10 @@ input LoginUserInput {
 type Mutation {
   blockProfile(id: ID!): Profile!
   blockUser(id: ID!): User!
+  bootstrapAdmin(email: String!): LoginResponse!
   createAnthropometricMeasurement(createAnthropometricMeasurementInput: CreateAnthropometricInput!): AnthropometricMeasurement!
   createBoard(createBoardInput: CreateBoardInput!): Board!
-  createCard(createCardInput: CreateCardInput!, listId: ID!): Card!
+  createCard(createCardInput: CreateCardInput!): Card!
   createList(createListInput: CreateListInput!): List!
   createPhysicalTest(createPhysicalTestInput: CreatePhysicalTestInput!): PhysicalTest!
   createProfile(createProfileInput: CreateProfileInput!): Profile!
@@ -216,10 +218,11 @@ type Mutation {
   removePhysicalTest(id: ID!): PhysicalTest!
   removeRoutine(id: ID!): Routine!
   removeTask(id: ID!): Task!
-  signup(loginUserInput: LoginUserInput!): SingupResponse!
+  signup(loginUserInput: LoginUserInput!): LoginResponse!
   updateAnthropometricMeasurement(updateAnthropometricMeasurementInput: UpdateAnthropometricInput!): AnthropometricMeasurement!
   updateBoard(updateBoardInput: UpdateBoardInput!): Board!
   updateCard(updateCardInput: UpdateCardInput!): Card!
+  updateCardPosition(CardPositionInput: UpdateCardPositionInput!): Card!
   updateList(updateListInput: UpdateListInput!): List!
   updateListPosition(updateListPositionInput: UpdateListPositionInput!): List!
   updatePhysicalTest(updatePhysicalTestInput: UpdatePhysicalTestInput!): PhysicalTest!
@@ -227,6 +230,7 @@ type Mutation {
   updateRoutine(updateRoutineInput: UpdateRoutineInput!): Routine!
   updateTask(updateTaskInput: UpdateTaskInput!): Task!
   updateUser(updateUserInput: UpdateUserInput!): User!
+  updateUserRole(updateUserRoleInput: UpdateUserRoleInput!): User!
 }
 
 type PhysicalTest {
@@ -283,7 +287,7 @@ type Query {
   findOneByUserPhysicalTest: PhysicalTest!
   findOnePhysicalTest(id: ID!): PhysicalTest!
   findOneRoutine(id: ID!): Routine!
-  isValidate(email: String!): LoginResponse!
+  isValidate(email: String!): Boolean!
   list(id: ID!): List!
   lists: [List!]!
   physicalTests(roles: [ValidRoles!] = []): [PhysicalTest!]!
@@ -329,12 +333,6 @@ type RunningDistanceDTO {
 input RunningDistanceInput {
   distance: Float!
   time: String!
-}
-
-type SingupResponse {
-  accessToken: String!
-  refreshToken: String
-  user: User!
 }
 
 input SprintInput {
@@ -395,6 +393,12 @@ input UpdateCardInput {
   routines: ID
   tasks: ID
   title: String
+}
+
+input UpdateCardPositionInput {
+  _id: ID!
+  listId: ID!
+  position: Int!
 }
 
 input UpdateListInput {
@@ -460,6 +464,11 @@ input UpdateUserInput {
   username: String
 }
 
+input UpdateUserRoleInput {
+  email: String!
+  role: String!
+}
+
 type User {
   _id: ID!
   createdAt: DateTime!
@@ -467,7 +476,6 @@ type User {
   email: String!
   isActive: Boolean!
   lastUpdatedById: UserPopulate
-  password: String!
   role: [String!]!
   updatedAt: DateTime!
   username: String!

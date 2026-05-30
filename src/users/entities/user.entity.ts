@@ -15,7 +15,6 @@ export class User extends AbstractModel{
   email: string;
 
   @HideField()
-  @Field(() => String)
   password: string;
 
   @Field(() => Boolean)

@@ -3,7 +3,8 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
 import { CardsService } from './cards.service';
 import { Card } from './entities/card.entity';
-import { CreateCardInput, UpdateCardInput } from './dto/card.input';
+import { CreateCardInput, UpdateCardInput, UpdateCardPositionInput } from './dto/card.input';
+import { CardResponse } from './dto/card-response';
 //authenticacion y autorizacion
 import { ValidRolesArgs } from '../../common/args/roles.args';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -20,10 +21,9 @@ export class CardsResolver {
   @Mutation(() => Card)
   createCard(
     @Args('createCardInput') createCardInput: CreateCardInput,
-    @Args('listId', { type: () => ID }) listId: string,
     @CurrentUser([ValidRoles.admin, ValidRoles.superadmin]) user: User,
     ) {
-    return this.cardsService.create(createCardInput, listId, user._id);
+    return this.cardsService.create(createCardInput, user._id);
   }
 
   @Query(() => [Card], { name: 'cards' })
@@ -41,6 +41,12 @@ export class CardsResolver {
   @Mutation(() => Card)
   updateCard(@Args('updateCardInput') updateCardInput: UpdateCardInput) {
     return this.cardsService.update(updateCardInput);
+  }
+
+  @Mutation(() => Card, { name: 'updateCardPosition' })
+  updateCardPosition(
+    @Args('CardPositionInput') CardPositionInput: UpdateCardPositionInput): Promise<CardResponse> {
+    return this.cardsService.updateCardPosition(CardPositionInput);
   }
 
   @Mutation(() => Card)

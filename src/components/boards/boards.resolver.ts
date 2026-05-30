@@ -22,7 +22,6 @@ export class BoardsResolver {
     @Args('createBoardInput') createBoardInput: CreateBoardInput,
     @CurrentUser([ValidRoles.admin, ValidRoles.superadmin]) user: User,
     ): Promise<Board> {
-      console.log('creacion de board-resolve', createBoardInput);
       return this.boardsService.create(createBoardInput, user._id);
   }
 
@@ -30,7 +29,6 @@ export class BoardsResolver {
   async findAll(
     @CurrentUser([ValidRoles.admin, ValidRoles.superadmin]) user: User,
   ): Promise<Board[]> {
-    console.log('get boards');
     return this.boardsService.findAll();
   }
 

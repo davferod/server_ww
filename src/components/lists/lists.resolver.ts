@@ -54,7 +54,7 @@ export class ListsResolver {
   async findOneByBoard(
     @Args('boardId', { type: () => ID }) boardId: Types.ObjectId,
     @CurrentUser([ValidRoles.admin, ValidRoles.superadmin, ValidRoles.user]) user: User,
-    ) {
+    ): Promise<List[]> {
     boardId = new Types.ObjectId(boardId);
     console.log('resolve findOneByBoard', boardId);
     return this.listsService.findByBoard(boardId);
