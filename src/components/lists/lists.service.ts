@@ -72,8 +72,12 @@ export class ListsService {
 
   async findByBoard(boardId: Types.ObjectId): Promise<ListDocument[]> {
     try {
-      const lists = await this.ListModel.find({boardId: boardId}).exec()
-      console.log('lists service', lists);
+      const lists = await this.ListModel.find({boardId})
+      .populate({
+        path:'cards',
+        select: 'title description position createdAt updatedAt',
+      }).exec()
+      console.log('Listas con cards populados:', JSON.stringify(lists, null, 2));
       return lists;
     } catch (error) {
       console.error('Error during user finding:', error);

@@ -1,0 +1,38 @@
+[
+  {
+    "email": "davidrd81@gmail.com",
+    "username": "davferod",
+    "password": "SuperPass123!",
+    "role": "superadmin"
+  },
+  {
+    "email": "entrenador1@gym.com",
+    "username": "entrenador1",
+    "password": "Entrenador123!",
+    "role": "admin"
+  },
+  {
+    "email": "atleta1@gym.com",
+    "username": "atleta1",
+    "password": "Atleta123!",
+    "role": "user"
+  },
+  {
+    "email": "atleta2@gym.com",
+    "username": "atleta2",
+    "password": "Atleta123!",
+    "role": "user"
+  },
+  {
+    "email": "testuser@example.com",
+    "username": "testuser",
+    "password": "Test123!",
+    "role": "user"
+  },
+  {
+    "email": "superadmin@gym.com",
+    "username": "superadmin",
+    "password": "SuperAdmin123!",
+    "role": "superadmin"
+  }
+]

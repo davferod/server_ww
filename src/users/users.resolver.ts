@@ -4,6 +4,7 @@ import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UpdateUserInput, FindUserInput } from './dto/user.input';
+import { UpdateUserRoleInput } from './dto/update-user-role.input';
 //authenticacion y autorizacion
 import { ValidRolesArgs } from './dto/args/roles.args';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -53,5 +54,13 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.admin, ValidRoles.superadmin]) user: User
     ): Promise<User> {
     return this.usersService.block(id, user._id.toString());
+  }
+
+  @Mutation(() => User, { name: 'updateUserRole' })
+  updateUserRole(
+    @Args('updateUserRoleInput') updateUserRoleInput: UpdateUserRoleInput,
+    @CurrentUser([ValidRoles.admin, ValidRoles.superadmin]) user: User
+  ): Promise<User> {
+    return this.usersService.updateRole(updateUserRoleInput.email, updateUserRoleInput.role);
   }
 }

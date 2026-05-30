@@ -55,6 +55,7 @@ export class ProfilesResolver {
     @Args('updateProfileInput') updateProfileInput: UpdateProfileInput,
     @CurrentUser([ValidRoles.admin, ValidRoles.superadmin]) user: User,
   ) {
+    console.log('updateProfileInput', updateProfileInput);
     return this.profilesService.update(updateProfileInput, user._id.toString());
   }
 

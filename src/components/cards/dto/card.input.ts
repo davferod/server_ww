@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 import { TaskInput } from '@components/tasks/dto/task.input';
 import { UserInput } from 'src/users/dto/user.input';
 import { RoutineInput } from '@components/routines/dto/routine.input';
-
+import { AbstractModel } from 'src/common/abstract.model';
 
 @InputType()
 export class CardInput {
@@ -80,10 +80,13 @@ export class MoveCardToListInput {
 @InputType()
 export class UpdateCardPositionInput {
   @Field(() => ID)
-  userId: Types.ObjectId;
-
+  _id: Types.ObjectId;
+  
   @Field(() => ID)
-  cardId: Types.ObjectId;
+  listId: Types.ObjectId;
+
+  @Field(() => Int)
+  position: number;
 }
 
 @InputType()

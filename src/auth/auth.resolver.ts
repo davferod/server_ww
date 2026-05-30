@@ -18,7 +18,6 @@ export class AuthResolver {
     constructor(private authService: AuthService) {}
 
     @Mutation(() => LoginResponse)
-    //@UseGuards(GqlAuthGuard) //TODO: Uncomment this line to enable authentication
     login(
         @Args('loginInput') loginInput: LoginInput
         ): Promise<LoginResponse> {
@@ -40,11 +39,17 @@ export class AuthResolver {
         return this.authService.revalidateToken( user );
     }
 
-    @Query(() => LoginResponse, {name: 'isValidate'})
+    @Query(() => Boolean, {name: 'isValidate'})
     async isValidateEmail(
-        @Args('email') email: string): Promise<User> {
-        console.log('email', email);
+        @Args('email') email: string): Promise<boolean> {
         return this.authService.isAvailable( email );
+    }
+
+    @Mutation(() => LoginResponse, { name: 'bootstrapAdmin' })
+    async bootstrapAdmin(
+        @Args('email') email: string
+    ): Promise<LoginResponse> {
+        return this.authService.bootstrapAdmin(email);
     }
 
 }

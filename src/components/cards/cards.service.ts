@@ -6,21 +6,21 @@ import { ListsService } from '@components/lists/lists.service';
 
 import { Card, CardDocument } from '@schemas/card.schema';
 import { CreateCardInput, UpdateCardInput, RemoveCardInput, UpdateCardPositionInput, MoveCardToListInput } from './dto/card.input';
+import { CardResponse } from './dto/card-response';
 
 
 @Injectable()
 export class CardsService {
   constructor(@InjectModel(Card.name) private readonly CardModel: Model<CardDocument>, private readonly listsService: ListsService) {}
 
-  async create(createCardInput: CreateCardInput,listId: string, _userId: Types.ObjectId): Promise<CardDocument> {
-    const _listId = new Types.ObjectId(listId);
+  async create(createCardInput: CreateCardInput, _userId: Types.ObjectId): Promise<CardDocument> {
+    console.log(createCardInput, _userId);
     try {
       const createdCard = await this.CardModel.create({
         ...createCardInput,
-        listId: _listId,
         userId: _userId
       });
-      await this.listsService.addCard(_listId, createdCard._id);
+      await this.listsService.addCard(createdCard.listId, createdCard._id);
       return createdCard;
     } catch (error) {
       console.error('Error during user creation:', error);
@@ -64,19 +64,19 @@ export class CardsService {
     }
   }
 
-  async updateMoveCardToList(moveCardToListInput: MoveCardToListInput): Promise<CardDocument> {
+  async updateCardPosition(CardPositionInput: UpdateCardPositionInput): Promise<CardResponse> {
     try {
       const updatedCard = await this.CardModel.findByIdAndUpdate(
-        moveCardToListInput._id,
+        CardPositionInput._id,
         {
-          listId: moveCardToListInput.listIdNew
+          listId: CardPositionInput.listId,
+          position: CardPositionInput.position
         },
         {new: true});
-      await this.listsService.deleteCard(moveCardToListInput.listIdOld, moveCardToListInput._id);
       return updatedCard;
     } catch (error) {
       console.error('Error during user update:', error);
-      throw new NotFoundException(`${moveCardToListInput._id} not found`);  // Lanza el error para que pueda ser capturado en la función signup
+      throw new NotFoundException(`${CardPositionInput._id} not found`);  // Lanza el error para que pueda ser capturado en la función signup
     }
   }
 

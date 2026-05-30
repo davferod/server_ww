@@ -76,10 +76,45 @@ export class UsersService {
     }
   }
 
+  async updateRole(email: string, role: string): Promise<UserDocument> {
+    try {
+      const validRoles = ['user', 'admin', 'superadmin', 'guest'];
+      if (!validRoles.includes(role)) {
+        throw new BadRequestException(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
+      }
+
+      const updatedUser = await this.userModel.findOneAndUpdate(
+        { email },
+        { $set: { role } },
+        { new: true }
+      ).exec();
+
+      if (!updatedUser) {
+        throw new NotFoundException(`User with email ${email} not found`);
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw new BadRequestException(`Error updating role: ${error.message}`);
+    }
+  }
+
   async block(id: string, userUpdate: string): Promise<UserDocument> {
     const userToBlock = await this.userModel.findById(id).exec();
     userToBlock.isActive = false;
     userToBlock.lastUpdatedById = new Types.ObjectId(userUpdate);
     return userToBlock.save();
+  }
+
+  async findAdmins(): Promise<UserDocument[]> {
+    try {
+      const admins = await this.userModel.find({
+        role: { $in: ['admin', 'superadmin'] }
+      }).exec();
+      return admins;
+    } catch (error) {
+      console.error('Error finding admins:', error);
+      return [];
+    }
   }
 }

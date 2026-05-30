@@ -8,14 +8,14 @@ import { AbstractModel } from 'src/common/abstract.model';
 
 @ObjectType()
 export class Card extends AbstractModel {
-  @Field()
-  title: string;
+  @Field({ nullable: true })
+  title?: string;
 
-  @Field()
-  description: string;
+  @Field({ nullable: true })
+  description?: string;
 
-  @Field(() => Int)
-  position: number;
+  @Field(() => Int , { nullable: true })
+  position?: number;
 
   @Field(() => [Task], { nullable: true })
   tasks: Types.ObjectId[]; 
@@ -25,4 +25,16 @@ export class Card extends AbstractModel {
 
   @Field(() => ID)
   userid?: Types.ObjectId;
+
+  @Field(() => ID)
+  listId: Types.ObjectId;
+}
+
+@ObjectType()
+export class CardPopulate {
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field(() => Int , { nullable: true })
+  position?: number;
 }

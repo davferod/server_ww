@@ -13,8 +13,10 @@ import { CardsModule } from '@components/cards/cards.module';
   imports: [
     MongooseModule.forFeature([{ name: Card.name, schema: CardSchema }]),
     MongooseModule.forFeature([{ name: List.name, schema: ListSchema }]),
-    forwardRef(() => CardsModule)
+    forwardRef(() => CardsModule),
   ],
   providers: [ListsResolver, ListsService, CardsService],
 })
 export class ListsModule {}
+
+

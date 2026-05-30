@@ -2,7 +2,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Types } from 'mongoose';
 
-import { Card } from '@components/cards/entities/card.entity';
+import { CardPopulate, Card } from '@components/cards/entities/card.entity';
 import { Board } from '@components/boards/entities/board.entity';
 import { AbstractModel } from 'src/common/abstract.model';
 
@@ -13,7 +13,7 @@ export class List extends AbstractModel {
   title: string;
 
   @Field(() => [Card], { nullable: true })
-  cards: Types.ObjectId[]; 
+  cards?: Types.ObjectId[];
 
   @Field(() => Board)
   boardId: Types.ObjectId;
