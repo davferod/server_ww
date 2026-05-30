@@ -218,7 +218,7 @@ type Mutation {
   removePhysicalTest(id: ID!): PhysicalTest!
   removeRoutine(id: ID!): Routine!
   removeTask(id: ID!): Task!
-  signup(loginUserInput: LoginUserInput!): SingupResponse!
+  signup(loginUserInput: LoginUserInput!): LoginResponse!
   updateAnthropometricMeasurement(updateAnthropometricMeasurementInput: UpdateAnthropometricInput!): AnthropometricMeasurement!
   updateBoard(updateBoardInput: UpdateBoardInput!): Board!
   updateCard(updateCardInput: UpdateCardInput!): Card!
@@ -333,12 +333,6 @@ type RunningDistanceDTO {
 input RunningDistanceInput {
   distance: Float!
   time: String!
-}
-
-type SingupResponse {
-  accessToken: String!
-  refreshToken: String
-  user: User!
 }
 
 input SprintInput {
@@ -482,7 +476,6 @@ type User {
   email: String!
   isActive: Boolean!
   lastUpdatedById: UserPopulate
-  password: String!
   role: [String!]!
   updatedAt: DateTime!
   username: String!

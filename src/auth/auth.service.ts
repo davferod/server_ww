@@ -100,6 +100,13 @@ export class AuthService {
 
     // Bootstrap method: Promote user to admin if no admins exist yet
     async bootstrapAdmin(email: string): Promise<LoginResponse> {
+        // Validar que el email coincide con BOOTSTRAP_ADMIN_EMAIL del entorno
+        const bootstrapEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
+        if (!bootstrapEmail || email !== bootstrapEmail) {
+            throw new BadRequestException(
+                'Bootstrap admin email does not match BOOTSTRAP_ADMIN_EMAIL environment variable'
+            );
+        }
         // Check if any admin or superadmin exists
         const adminExists = await this.usersService.findAdmins();
         
